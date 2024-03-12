@@ -19,7 +19,7 @@ parameters {
   real<lower=0> sigma_g; // Standard deviation of random walk for g
 }
 model {
-  // Fixed parameters defined within the model block
+  // Fixed parameters
   real r = 0.5; // Probability of repeating own choice
   real c = 0.2; // Probability of copying opponent's choice
   
@@ -66,12 +66,6 @@ fit <- sampling(stan_model, data = stan_data, chains = 2, iter = 2000, cores = 2
 
 traceplot(fit)
 
-# save.image("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save_image/image.Rdata")
-
-# load("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save_image/time_variant.Rdata")
-
-
-
 # Extract the posterior samples
 
 
@@ -115,7 +109,5 @@ ggplot(plot_data_simplified, aes(x = Time, y = Estimate, colour = Parameter)) +
        fill = "Parameter") +
   ylim(0,1)+
   theme_minimal()
-
-# ggsave("parameters_over_time.png", width = 10, height = 6, dpi = 300, bg = back_ground_white)
 
 

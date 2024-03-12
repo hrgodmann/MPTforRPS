@@ -58,10 +58,6 @@ stan_data <- list(N = nrow(dat),
 # Fit model
 fit <- sampling(stan_model, data = stan_data, chains = 2, iter = 2000, cores = 2, warmup = 500)
 
-# save.image("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save_image/time_invariant.Rdata")
-
-# load("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save_image/time_invariant.Rdata")
-
 # posterior samples
 posterior_samples <- extract(fit)
 
@@ -72,7 +68,7 @@ posterior_df <- data.frame(
   c = posterior_samples$c
 )
 
-# Define Beta distribution function for Beta(2,2)
+# prior for plot
 beta_prior <- function(x) dbeta(x, shape1 = 2, shape2 = 2)
 
 
