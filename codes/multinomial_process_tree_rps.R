@@ -14,21 +14,21 @@ data {
   int<lower=0, upper=3> opp_choices[N];    // Opponent's previous choices: 0 = none, 1 = rock, 2 = paper, 3 = scissors
 }
 parameters {
-  real<lower=0, upper=1> c;        // Probability of guessing
+  real<lower=0, upper=1> g;        // Probability of guessing
   real<lower=0, upper=1> r;        // Probability of repeating own choice when not guessing
-  real<lower=0, upper=1> u;        // Probability of copying opponent's choice when not repeating own
+  real<lower=0, upper=1> c;        // Probability of copying opponent's choice when not repeating own
 }
 model {
   // Prior distributions for our parameters
-  c ~ beta(2, 2);
+  g ~ beta(2, 2);
   r ~ beta(2, 2);
-  u ~ beta(2, 2);
+  c ~ beta(2, 2);
   
   for (i in 1:N) {
     // Probabilities for each choice based on the MPT model
-    real p_rock = c / 3 + (1 - c) * ((r * (prev_choices[i] == 1)) + ((1 - r) * (u * (opp_choices[i] == 1))));
-    real p_paper = c / 3 + (1 - c) * ((r * (prev_choices[i] == 2)) + ((1 - r) * (u * (opp_choices[i] == 2))));
-    real p_scissors = c / 3 + (1 - c) * ((r * (prev_choices[i] == 3)) + ((1 - r) * (u * (opp_choices[i] == 3))));
+    real p_rock = g / 3 + (1 - g) * ((r * (prev_choices[i] == 1)) + ((1 - r) * (c * (opp_choices[i] == 1))));
+    real p_paper = g / 3 + (1 - g) * ((r * (prev_choices[i] == 2)) + ((1 - r) * (c * (opp_choices[i] == 2))));
+    real p_scissors = g / 3 + (1 - g) * ((r * (prev_choices[i] == 3)) + ((1 - r) * (c * (opp_choices[i] == 3))));
     
     // Normalizing the probabilities
     real sum_p = p_rock + p_paper + p_scissors;
@@ -60,16 +60,16 @@ fit <- sampling(stan_model, data = stan_data, chains = 2, iter = 2000, cores = 2
 
 # save.image("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save_image/time_invariant.Rdata")
 
-load("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save_image/time_invariant.Rdata")
+# load("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save_image/time_invariant.Rdata")
 
 # posterior samples
 posterior_samples <- extract(fit)
 
 
 posterior_df <- data.frame(
-  c = posterior_samples$c,
+  g = posterior_samples$g,
   r = posterior_samples$r,
-  u = posterior_samples$u
+  c = posterior_samples$c
 )
 
 # Define Beta distribution function for Beta(2,2)
@@ -77,11 +77,11 @@ beta_prior <- function(x) dbeta(x, shape1 = 2, shape2 = 2)
 
 
 # Plot for c with prior
-plot_c <- ggplot(posterior_df, aes(x = c)) +
+plot_g <- ggplot(posterior_df, aes(x = g)) +
   geom_density(fill = "skyblue", alpha = 0.5) +
   stat_function(fun = beta_prior, color = "black", size = 1) +
-  labs(title = "Posterior and Prior Distribution of c",
-       x = "c",
+  labs(title = "Posterior and Prior Distribution of g",
+       x = "g",
        y = "Density") +
   theme_minimal() +
   xlim(0, 1) +
@@ -99,11 +99,11 @@ plot_r <- ggplot(posterior_df, aes(x = r)) +
   ylim(0, 7)
 
 # Plot for u with prior
-plot_u <- ggplot(posterior_df, aes(x = u)) +
+plot_c <- ggplot(posterior_df, aes(x = c)) +
   geom_density(fill = "salmon", alpha = 0.5) +
   stat_function(fun = beta_prior, color = "black", size = 1) +
-  labs(title = "Posterior and Prior Distribution of u",
-       x = "u",
+  labs(title = "Posterior and Prior Distribution of c",
+       x = "c",
        y = "Density") +
   theme_minimal() +
   xlim(0, 1) +
@@ -111,4 +111,4 @@ plot_u <- ggplot(posterior_df, aes(x = u)) +
 
 
 
-plot_c + plot_r + plot_u + plot_layout(ncol = 3)
+plot_g + plot_r + plot_c + plot_layout(ncol = 3)
