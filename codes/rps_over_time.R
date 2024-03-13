@@ -20,12 +20,12 @@ parameters {
 }
 model {
   // Fixed parameters
-  real r = 0.5; // Probability of repeating own choice
-  real c = 0.2; // Probability of copying opponent's choice
+  real r = 0.3; // Probability of repeating own choice
+  real c = 0.7; // Probability of copying opponent's choice
   
   // Priors
   sigma_g ~ normal(0, 0.1);
-  g[1] ~ beta(2, 2);
+  g[1] ~ beta(1, 1);
 
   // Random walk for g
   for (t in 2:N) {
@@ -95,6 +95,13 @@ plot_data_simplified <- data.frame(
 
 source("/Users/henrikgodmann/Desktop/workspace/GitHub/hrgodmann/Rcolors.R")
 
+# Linear decrease for g
+start_g <- 0.2
+end_g <- 0.8
+g <- seq(from = start_g, to = end_g, length.out = nrow(dat))
+# Assuming Time is numeric and we want it to span the same range as g
+time_sequence <- seq(min(plot_data_simplified$Time), max(plot_data_simplified$Time), length.out = nrow(dat))
+g_data <- data.frame(Time = time_sequence, g = g)
 
 # Plot
 ggplot(plot_data_simplified, aes(x = Time, y = Estimate, colour = Parameter)) +
@@ -107,7 +114,11 @@ ggplot(plot_data_simplified, aes(x = Time, y = Estimate, colour = Parameter)) +
        y = "Estimate",
        colour = "Parameter",
        fill = "Parameter") +
-  ylim(0,1)+
+  ylim(0,1) +
+  geom_line(data = g_data, aes(x = Time, y = g), colour = "black") + # Use g_data here with black color
   theme_minimal()
 
+
+
+save.image("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save.image/save_image.Rdata")
 

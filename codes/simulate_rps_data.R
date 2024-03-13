@@ -5,14 +5,14 @@
 set.seed(42)
 
 # Updated probabilities
-r <- 0.5  # Probability of repeating own choice when not guessing
-c <- 0.2  # Probability of copying opponent's choice when not repeating own
+r <- 0.3  # Probability of repeating own choice when not guessing
+c <- 0.7  # Probability of copying opponent's choice when not repeating own
 
-N <- 100  # Number of games to simulate
+N <- 1000  # Number of games to simulate
 
 # Linear decrease for g
-start_g <- 0.7
-end_g <- 0.1
+start_g <- 0.2
+end_g <- 0.8
 g <- seq(from = start_g, to = end_g, length.out = N)
 
 # Initialize vectors to store choices
@@ -57,6 +57,7 @@ opp_choices[is.na(opp_choices)] <- 0
 simulated_data <- data.frame(Game = 1:N, PlayerChoice = choices, 
                              PlayerPrevChoice = prev_choices, OpponentPrevChoice = opp_choices)
 
+
 # Save the simulated data
 write.csv(simulated_data, "/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/simulated/simulated_data_time_variant_linear_g.csv", row.names = FALSE)
 
@@ -74,7 +75,7 @@ r <- 0.5  # Probability of repeating own choice when not guessing
 c <- 0.2  # Probability of copying opponent's choice when not repeating own
 g <- 0.7
 
-N <- 1000  # Number of games to simulate
+N <- 100  # Number of games to simulate
 
 
 
