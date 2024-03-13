@@ -20,9 +20,9 @@ parameters {
 }
 model {
   // Prior distributions for our parameters
-  g ~ beta(2, 2);
-  r ~ beta(2, 2);
-  c ~ beta(2, 2);
+  g ~ beta(1, 1);
+  r ~ beta(1, 1);
+  c ~ beta(1, 1);
   
   for (i in 1:N) {
     // Probabilities for each choice based on the MPT model
@@ -44,8 +44,9 @@ model {
 stan_model <- stan_model(model_code = model)
 
 
-dat <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/simulated/simulated_data_time_invariant.csv")
-
+# dat <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/simulated/simulated_data_time_invariant.csv")
+dat_real <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/real/dat_mona.csv")
+dat <- dat_real 
 
 
 stan_data <- list(N = nrow(dat), 
@@ -56,7 +57,7 @@ stan_data <- list(N = nrow(dat),
 
 
 # Fit model
-fit <- sampling(stan_model, data = stan_data, chains = 2, iter = 2000, cores = 2, warmup = 500)
+fit <- sampling(stan_model, data = stan_data, chains = 2, iter = 2000, cores = 2, warmup = 500, control = list(adapt_delta = 0.99, max_treedepth = 17))
 
 # posterior samples
 posterior_samples <- extract(fit)
@@ -69,7 +70,7 @@ posterior_df <- data.frame(
 )
 
 # prior for plot
-beta_prior <- function(x) dbeta(x, shape1 = 2, shape2 = 2)
+beta_prior <- function(x) dbeta(x, shape1 = 1, shape2 = 1)
 
 
 # Plot for c with prior
@@ -108,3 +109,7 @@ plot_c <- ggplot(posterior_df, aes(x = c)) +
 
 
 plot_g + plot_r + plot_c + plot_layout(ncol = 3)
+
+
+
+

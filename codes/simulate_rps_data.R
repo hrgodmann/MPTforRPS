@@ -8,11 +8,11 @@ set.seed(42)
 r <- 0.3  # Probability of repeating own choice when not guessing
 c <- 0.7  # Probability of copying opponent's choice when not repeating own
 
-N <- 1000  # Number of games to simulate
+N <- 250  # Number of games to simulate
 
 # Linear decrease for g
-start_g <- 0.2
-end_g <- 0.8
+start_g <- 0.75
+end_g <- 0.25
 g <- seq(from = start_g, to = end_g, length.out = N)
 
 # Initialize vectors to store choices
@@ -75,7 +75,7 @@ r <- 0.5  # Probability of repeating own choice when not guessing
 c <- 0.2  # Probability of copying opponent's choice when not repeating own
 g <- 0.7
 
-N <- 100  # Number of games to simulate
+N <- 250  # Number of games to simulate
 
 
 
