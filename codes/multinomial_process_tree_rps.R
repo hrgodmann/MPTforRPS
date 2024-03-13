@@ -45,7 +45,7 @@ stan_model <- stan_model(model_code = model)
 
 
 # dat <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/simulated/simulated_data_time_invariant.csv")
-dat_real <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/real/dat_mona.csv")
+dat_real <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/real/dat_chiara.csv")
 dat <- dat_real 
 
 
@@ -77,39 +77,42 @@ beta_prior <- function(x) dbeta(x, shape1 = 1, shape2 = 1)
 plot_g <- ggplot(posterior_df, aes(x = g)) +
   geom_density(fill = "skyblue", alpha = 0.5) +
   stat_function(fun = beta_prior, color = "black", size = 1) +
-  labs(title = "Posterior and Prior Distribution of g",
+  labs(title = "Prior and Posterior Distribution of g",
        x = "g",
        y = "Density") +
   theme_minimal() +
   xlim(0, 1) +
-  ylim(0, 7)
+  ylim(0, 7.5)
 
 # Plot for r with prior
 plot_r <- ggplot(posterior_df, aes(x = r)) +
   geom_density(fill = "lightgreen", alpha = 0.5) +
   stat_function(fun = beta_prior, color = "black", size = 1) +
-  labs(title = "Posterior and Prior Distribution of r",
+  labs(title = "Prior and Posterior Distribution of r",
        x = "r",
        y = "Density") +
   theme_minimal() +
   xlim(0, 1) +
-  ylim(0, 7)
+  ylim(0, 7.5)
 
 # Plot for u with prior
 plot_c <- ggplot(posterior_df, aes(x = c)) +
   geom_density(fill = "salmon", alpha = 0.5) +
   stat_function(fun = beta_prior, color = "black", size = 1) +
-  labs(title = "Posterior and Prior Distribution of c",
+  labs(title = "Prior and Posterior Distribution of c",
        x = "c",
        y = "Density") +
   theme_minimal() +
   xlim(0, 1) +
-  ylim(0, 7)
+  ylim(0, 7.5)
 
 
 
-plot_g + plot_r + plot_c + plot_layout(ncol = 3)
+plot_combined <- plot_g + plot_r + plot_c + plot_layout(ncol = 3)
+plot_combined
+# save.image("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save.image/save_image.Rdata")
 
 
+ggsave("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/plots/chiara.pdf", colormodel = "cmyk")
 
 
