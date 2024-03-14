@@ -1,7 +1,4 @@
 
-
-
-
 library(rstan)
 library(ggplot2)
 
@@ -21,8 +18,8 @@ transformed parameters {
   vector[3] choice_probs[N]; // Probabilities for each choice at each time
   
   // Fixed parameters
-  real r = 0.5; // Probability of repeating own choice
-  real c = 0.5; // Probability of copying opponent's choice
+  real r = 0.6; // Probability of repeating own choice
+  real c = 0.3; // Probability of copying opponent's choice
   
   for (i in 1:N) {
     real p_rock = g[i] / 3 + (1 - g[i]) * ((r * (prev_choices[i] == 1)) + ((1 - r) * (c * (opp_choices[i] == 1))));
@@ -55,8 +52,11 @@ model {
 stan_model <- stan_model(model_code = model)
 
 
-# dat <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/simulated/simulated_data_time_variant_linear_g.csv")
-dat <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/real/dat_dice.csv")
+dat <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/real/dat_mona.csv")
+
+
+# dat$PlayerPrevChoice <- c(0, dat$Player_A[1:nrow(dat)-1])
+# dat$OpponentPrevChoice <- c(0, dat$Player_B[1:nrow(dat)-1])
 
 
 stan_data <- list(N = nrow(dat),
@@ -68,16 +68,14 @@ stan_data <- list(N = nrow(dat),
 
 
 # Fit model
-fit <- sampling(stan_model, data = stan_data, chains = 2, iter = 2000, cores = 2, warmup = 500, control = list(adapt_delta = 0.99, max_treedepth = 17))
+fit <- sampling(stan_model, data = stan_data, chains = 2, iter = 1000, cores = 2, warmup = 400, control = list(adapt_delta = 0.99, max_treedepth = 17))
 
-
-
-traceplot(fit)
+# traceplot(fit)
 
 # Extract the posterior samples
 
 
-posterior_samples_g <- extract(fit)$g
+posterior_samples_g <- rstan::extract(fit)$g
 
 # Calculate the mean of the posterior samples at each time point
 mean_g_over_time <- apply(posterior_samples_g, 2, mean)
@@ -87,8 +85,8 @@ time_points <- 1:nrow(dat)
 
 
 # Calculate the 2.5th and 97.5th percentiles for c at each time point
-lower_ci_g <- apply(posterior_samples_g, 2, quantile, probs = 0.05)
-upper_ci_g <- apply(posterior_samples_g, 2, quantile, probs = 0.95)
+lower_ci_g <- apply(posterior_samples_g, 2, quantile, probs = 0.2)
+upper_ci_g <- apply(posterior_samples_g, 2, quantile, probs = 0.8)
 
 #################
 
@@ -127,7 +125,8 @@ ggplot(plot_data_simplified, aes(x = Time, y = Estimate, colour = Parameter)) +
   # geom_line(data = g_data, aes(x = Time, y = g), colour = "black") + # Use g_data here with black color
   theme_minimal()
 
+# ggsave("/Users/henrikgodmann/Desktop/rps_teaching/plots/mona_time.pdf", colormodel = "cmyk")
 
 
-# save.image("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save.image/save_image.Rdata")
+
 

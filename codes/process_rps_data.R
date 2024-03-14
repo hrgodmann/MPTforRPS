@@ -34,6 +34,8 @@ dat2$Chiara <- gsub("r", 1, dat2$Chiara)
 dat2$Chiara <- gsub("p", 2, dat2$Chiara)
 dat2$Chiara <- gsub("s", 3, dat2$Chiara)
 
+write.csv(dat2, "/Users/henrikgodmann/Desktop/rps_teaching/real_data/real_data.csv", row.names = F)
+
 
 dat_mona <- dat2[c(2,3,1)]
 names(dat_mona) <- c("PlayerChoice", "PlayerPrevChoice", "OpponentPrevChoice")

@@ -38,15 +38,18 @@ model {
     choices[i] ~ categorical(choice_probs);
   }
 }
-
 "
 
 stan_model <- stan_model(model_code = model)
 
 
-# dat <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/simulated/simulated_data_time_invariant.csv")
-dat_real <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/real/dat_chiara.csv")
-dat <- dat_real 
+dat <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/real/dat_mona.csv")
+# dat_real <- read.csv("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/data/real/dat_chiara.csv")
+# dat <- dat_real
+
+
+# dat$PlayerPrevChoice <- c(0, dat$Player_A[1:nrow(dat)-1])
+# dat$OpponentPrevChoice <- c(0, dat$Player_B[1:nrow(dat)-1])
 
 
 stan_data <- list(N = nrow(dat), 
@@ -56,11 +59,12 @@ stan_data <- list(N = nrow(dat),
                   )
 
 
+
 # Fit model
 fit <- sampling(stan_model, data = stan_data, chains = 2, iter = 2000, cores = 2, warmup = 500, control = list(adapt_delta = 0.99, max_treedepth = 17))
 
 # posterior samples
-posterior_samples <- extract(fit)
+posterior_samples <- rstan::extract(fit)
 
 
 posterior_df <- data.frame(
@@ -69,7 +73,7 @@ posterior_df <- data.frame(
   c = posterior_samples$c
 )
 
-# prior for plot
+ # prior for plot
 beta_prior <- function(x) dbeta(x, shape1 = 1, shape2 = 1)
 
 
@@ -113,6 +117,6 @@ plot_combined
 # save.image("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/save.image/save_image.Rdata")
 
 
-ggsave("/Users/henrikgodmann/Desktop/workspace/GitHub/MPTforRPS/plots/chiara.pdf", colormodel = "cmyk")
+# ggsave("/Users/henrikgodmann/Desktop/rps_teaching/plots/mona_mpt.pdf", colormodel = "cmyk")
 
 
